@@ -108,7 +108,7 @@ public class EnemyWalk : Actor
 
     private void FixedUpdate()
     {
-        if (_touchingDirections.IsGround && _touchingDirections.IsOnWall)
+        if (_touchingDirections.IsGround && _touchingDirections.IsOnWall && !HasTarget)
         {
             FlipDirection();
         }
