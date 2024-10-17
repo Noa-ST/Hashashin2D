@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc118515802005d44843d0fb31cc68dc, type: 3}
+  m_Name: Player
+  m_EditorClassIdentifier: 
+  hp: 100
+  level: 0
+  maxLevel: 100
+  xp: 0
+  levelUpXpRequied: 50
+  levelUpXpUpRequireUp: 50
+  hpUp: 10
+  damageBasicAttack: 20
+  damageBasicAttackUpPerLevel: 2
+  damageAttackSkill2: 30
+  damageAttackSkill2Up: 5
+  attackSkill2Cooldown: 5
+  attackSkill2CooldownUp: 0.25
+  attackSkill2UpgradeCost: 50
+  attackSkill2UpgradeCostUp: 20
+  attackSkill2Level: 0
+  damageAttackSkill3: 40
+  damageAttackSkill3Up: 10
+  attackSkill3Cooldown: 10
+  attackSkill3CooldownUp: 0.25
+  attackSkill3UpgradeCost: 70
+  attackSkill3UpgradeCostUp: 30
+  attackSkill3Level: 0
+  damageAttackUntil: 60
+  damageAttackUntilUp: 15
+  attackUntilCooldown: 15
+  attackUntillCooldownUp: 0.15
+  attackUntilUpgradeCost: 100
+  attackUntilUpgradeCostUp: 40
+  attackUntilLevel: 0
+  attackUntilRequireBuyCons: 500
+  maxSkillLevel: 15
