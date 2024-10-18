@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +10,8 @@ public class EnemyWalk : Actor
     public DetectionZone cliffDetectionZone;
     TouchingDirections _touchingDirections;
     EnemyStat _enemyStat;
-    float m_xpBonus;
+    float _xpBonus;
+    PlayerController _player;
 
     public override void Init()
     {
@@ -19,9 +19,13 @@ public class EnemyWalk : Actor
         _enemyStat = (EnemyStat)statData;
         _enemyStat.Load();
         CurHp = _enemyStat.hp;
-        OnDead.AddListener(OnSpawnColectable); 
+
+        _player = GameManager.Ins.Player;
+
+        OnDead.AddListener(OnSpawnColectable);
         OnDead.AddListener(OnAddXpToPlayer);
     }
+
 
     public enum WalkAbleDirection
     {
@@ -154,12 +158,13 @@ public class EnemyWalk : Actor
 
     private void OnAddXpToPlayer()
     {
-        // Thêm XP cho người chơi
+        float randomXpBonus = Random.Range(_enemyStat.minXpBonus, _enemyStat.maxXpBonus);
+        _player.AddXp(randomXpBonus);
     }
 
     private void OnSpawnColectable()
     {
-        // Sinh ra vật phẩm tại vị trí của kẻ thù
+        CollectableManager.Ins.Spawn(transform.position);
     }
 
     private void OnDisable()

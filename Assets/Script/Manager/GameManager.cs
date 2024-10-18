@@ -1,16 +1,36 @@
 ﻿using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+public enum GameState
+{
+    STARTING,
+    PLAYING,
+    PAUSED,
+    GAMEOVER
+}
 
 public class GameManager : Singleton<GameManager>
 {
-    public TextMeshProUGUI coinsCollectedText;
+    public static GameState state;
     public List<Transform> startPoints;
     public List<GameObject> levels;
     private int currentLevelIndex = 0;
-    private List<EnemyWalk> enemiesInArea = new List<EnemyWalk>(); // Danh sách kẻ thù trong khu vực
-    private bool bossDefeated = false; // Trạng thái của boss
+    private List<EnemyWalk> enemiesInArea = new List<EnemyWalk>();
+    private bool bossDefeated = false;
+    public PlayerController player;
+
+    public PlayerController Player { get => player; set => player = value; }
+
+    protected override void Awake()
+    {
+        MakeSingleton(false);
+    }
+
+    private void Start()
+    {
+        state = GameState.STARTING; 
+        // GUIManager.Ins.ShowGameGui(false); // Hiển thị GUI nếu cần
+    }
 
     public void TransitionToNextLevel(GameObject player)
     {
@@ -21,6 +41,14 @@ public class GameManager : Singleton<GameManager>
             levels[currentLevelIndex].SetActive(true); // Bật level tiếp theo
             MovePlayerToStartPoint(player);
             ResetLevelState(); // Reset trạng thái cho level mới
+
+            state = GameState.PLAYING; // Đặt trạng thái thành PLAYING
+        }
+        else
+        {
+            // Nếu người chơi đã vượt qua tất cả các level
+            state = GameState.GAMEOVER; // Có thể chuyển đến một trạng thái thắng hoặc hoàn tất
+            // Bạn có thể thêm mã để hiển thị màn hình thắng ở đây nếu cần
         }
     }
 
@@ -32,10 +60,17 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void PlayerDied()
+    {
+        state = GameState.GAMEOVER; // Đặt trạng thái thành GAMEOVER
+        Restart(); // Khởi động lại level vừa chơi
+    }
+
     public void Restart()
     {
-        ResetGame();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ResetLevelState(); // Reset trạng thái level
+        levels[currentLevelIndex].SetActive(true); // Bật lại level hiện tại
+        MovePlayerToStartPoint(GameObject.FindWithTag("Player")); // Đưa player trở về điểm xuất phát
     }
 
     private void ResetGame()
@@ -47,17 +82,13 @@ public class GameManager : Singleton<GameManager>
         }
         levels[currentLevelIndex].SetActive(true); // Bật level đầu tiên
         ResetLevelState(); // Reset trạng thái cho level đầu tiên
+        state = GameState.PLAYING; // Đặt lại trạng thái thành PLAYING
     }
 
     private void ResetLevelState()
     {
         enemiesInArea.Clear(); // Xóa danh sách kẻ thù trong khu vực
         bossDefeated = false; // Reset trạng thái boss
-    }
-
-    public void Menu()
-    {
-        SceneManager.LoadScene("Menu");
     }
 
     // Phương thức để đăng ký kẻ thù
@@ -102,7 +133,6 @@ public class GameManager : Singleton<GameManager>
         {
             MovePlayerToStartPoint(GameObject.FindWithTag("Player")); // Di chuyển player đến điểm xuất phát tiếp theo
             TransitionToNextLevel(GameObject.FindWithTag("Player")); // Chuyển sang level tiếp theo
-            Debug.Log("Moving to the next start point!");
         }
     }
 }

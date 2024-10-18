@@ -17,7 +17,7 @@ public class PlayerController : Actor
 
     [Header("Player Event:")]
     public UnityEvent OnAddXp;
-    public UnityEvent OnLevelUp; 
+    public UnityEvent OnLevelUp;
 
     public bool IsMoving { get; private set; }
 
@@ -55,9 +55,9 @@ public class PlayerController : Actor
     {
         if (statData == null) return;
 
-        _playerStats = (PlayerStats)statData; 
-        _playerStats.Load(); 
-        CurHp = _playerStats.hp; 
+        _playerStats = (PlayerStats)statData;
+        _playerStats.Load();
+        CurHp = _playerStats.hp;
     }
 
     protected override void Awake()
@@ -166,7 +166,7 @@ public class PlayerController : Actor
     {
         if (PlayerStats == null) return;
 
-       _playerStats.xp += xpBonus;
+        _playerStats.xp += xpBonus;
         _playerStats.Upgrade(OnUpgradeStats);
         OnAddXp?.Invoke();
         _playerStats.Save();
@@ -193,7 +193,7 @@ public class PlayerController : Actor
         EnemyWalk damageAble = collision.GetComponent<EnemyWalk>();
         if (damageAble != null)
         {
-             damageAble.Takedamage(attackDamage);
+            damageAble.Takedamage(attackDamage);
         }
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   hp: 100
   level: 0
   maxLevel: 100
-  xp: 0
+  xp: 108.436554
   levelUpXpRequied: 50
   levelUpXpUpRequireUp: 50
   hpUp: 10
