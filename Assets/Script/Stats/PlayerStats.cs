@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Player Stats", menuName = "Nora/TDS/Create Player Stats")]
@@ -10,13 +8,13 @@ public class PlayerStats : ActionStats
     public int level;
     public int maxLevel;
     public float xp;
-    public float levelUpXpRequied;
+    public float levelUpXpRequired;
 
     [Header("Level Up:")]
     public float levelUpXpUpRequireUp;
     public float hpUp;
 
-    [Header("Attack Bassic:")]
+    [Header("Attack Basic:")]
     public float damageBasicAttack;
     public float damageBasicAttackUpPerLevel;
 
@@ -51,22 +49,32 @@ public class PlayerStats : ActionStats
     [Header("Skill Upgrade Limits")]
     public int maxSkillLevel;
 
+    // Sự kiện thay đổi chỉ số nhân vật
+    public delegate void StatsChangedHandler();
+    public event StatsChangedHandler OnStatsChanged;
 
+    private void NotifyStatsChanged()
+    {
+        OnStatsChanged?.Invoke();
+    }
+
+    // Nâng cấp level của nhân vật
     public override void Upgrade(Action OnSuccess = null, Action OnFailed = null)
     {
-        if (xp >= levelUpXpRequied && !IsMaxLevel())
+        if (xp >= levelUpXpRequired && !IsMaxLevel())
         {
-            while (xp >= levelUpXpRequied && IsMaxLevel())
+            while (xp >= levelUpXpRequired && !IsMaxLevel())
             {
                 level++;
-                xp -= levelUpXpRequied;
+                xp -= levelUpXpRequired;
 
                 damageBasicAttack += damageBasicAttackUpPerLevel;
 
                 hp += hpUp * Helper.GetUpgradeFormuala(level);
-                levelUpXpRequied += levelUpXpUpRequireUp * Helper.GetUpgradeFormuala(level);
+                levelUpXpRequired += levelUpXpUpRequireUp * Helper.GetUpgradeFormuala(level);
                 Save();
                 OnSuccess?.Invoke();
+                NotifyStatsChanged();
             }
 
             if (IsMaxLevel())
@@ -74,80 +82,85 @@ public class PlayerStats : ActionStats
                 OnFailed?.Invoke();
             }
         }
-        else if (UpgradeSkill("Attack Skill 2") || UpgradeSkill("Attack Skill 3") || UpgradeSkill("Attack Until"))
-        {
-            OnSuccess?.Invoke();
-        }
         else
         {
             OnFailed?.Invoke();
         }
     }
 
-    public bool UpgradeSkill(string skillName)
+    // Kiểm tra và nâng cấp Skill 2
+    public bool UpgradeSkill2()
     {
-        switch (skillName)
+        if (Pref.IsEnoughCoins(attackSkill2UpgradeCost) && attackSkill2Level < maxSkillLevel)
         {
-            case "Attack Skill 2":
-                if (Pref.IsEnoughCoins(attackSkill2UpgradeCost) && attackSkill2Level < maxSkillLevel)
-                {
-                    Pref.coins -= attackSkill2UpgradeCost;
-                    attackSkill2Level++;
-                    damageAttackSkill2 *= damageAttackSkill2Up * Helper.GetUpgradeFormuala(attackSkill2Level);
-                    attackSkill2Cooldown -= attackSkill2CooldownUp * Helper.GetUpgradeFormuala(attackSkill2Level);
-                    attackSkill2UpgradeCost += attackSkill2UpgradeCostUp * attackSkill2Level;
-                    Save();
-                    return true;
-                }
-                break;
-            case "Attack Skill 3":
-                if (Pref.IsEnoughCoins(attackSkill3UpgradeCost) && attackSkill3Level < maxSkillLevel)
-                {
-                    Pref.coins -= attackSkill3UpgradeCost;
-                    attackSkill3Level++;
-                    damageAttackSkill3 *= damageAttackSkill3Up * Helper.GetUpgradeFormuala(attackSkill3Level);
-                    attackSkill3Cooldown -= attackSkill3CooldownUp * Helper.GetUpgradeFormuala(attackSkill3Level);
-                    attackSkill3UpgradeCost += attackSkill3UpgradeCostUp * attackSkill3Level;
-                    Save();
-                    return true;
-                }
-                break;
-            case "Attack Until":
-                if (attackUntilLevel == 0) // Nếu kỹ năng chưa được mua
-                {
-                    if (Pref.IsEnoughCoins(attackUntilRequireBuyCons)) // Kiểm tra số tiền cần thiết để mua kỹ năng
-                    {
-                        Pref.coins -= attackUntilRequireBuyCons; // Trừ tiền
-                        attackUntilLevel = 1; // Đánh dấu kỹ năng là đã mua
-                        damageAttackUntil *= damageAttackUntilUp; // Thiết lập sát thương cho kỹ năng
-                        Save();
-                        return true;
-                    }
-                }
-                else // Nếu kỹ năng đã được mua, cho phép nâng cấp
-                {
-                    if (Pref.IsEnoughCoins(attackUntilUpgradeCost) && attackUntilLevel < maxSkillLevel)
-                    {
-                        Pref.coins -= attackUntilUpgradeCost;
-                        attackUntilLevel++;
-                        damageAttackUntil *= damageAttackUntilUp * Helper.GetUpgradeFormuala(attackUntilLevel);
-                        attackUntilCooldown -= attackUntillCooldownUp * Helper.GetUpgradeFormuala(attackUntilLevel);
-                        attackUntilUpgradeCost += attackUntilUpgradeCostUp * attackUntilLevel;
-                        Save();
-                        return true;
-                    }
-                }
-                break;
+            Pref.coins -= attackSkill2UpgradeCost;
+            attackSkill2Level++;
+            damageAttackSkill2 += damageAttackSkill2Up;
+            attackSkill2Cooldown -= attackSkill2CooldownUp;
+            attackSkill2UpgradeCost += attackSkill2UpgradeCostUp * attackSkill2Level;
+            Save();
+            NotifyStatsChanged();
+            return true;
         }
         return false;
     }
 
+    // Kiểm tra và nâng cấp Skill 3
+    public bool UpgradeSkill3()
+    {
+        if (Pref.IsEnoughCoins(attackSkill3UpgradeCost) && attackSkill3Level < maxSkillLevel)
+        {
+            Pref.coins -= attackSkill3UpgradeCost;
+            attackSkill3Level++;
+            damageAttackSkill3 += damageAttackSkill3Up;
+            attackSkill3Cooldown -= attackSkill3CooldownUp;
+            attackSkill3UpgradeCost += attackSkill3UpgradeCostUp * attackSkill3Level;
+            Save();
+            NotifyStatsChanged();
+            return true;
+        }
+        return false;
+    }
 
+    // Kiểm tra và nâng cấp Attack Until
+    public bool UpgradeAttackUntil()
+    {
+        if (attackUntilLevel == 0)
+        {
+            // Kiểm tra nếu người chơi cần mua kỹ năng này trước
+            if (Pref.IsEnoughCoins(attackUntilRequireBuyCons))
+            {
+                Pref.coins -= attackUntilRequireBuyCons;
+                attackUntilLevel = 1;
+                Save();
+                NotifyStatsChanged();
+                return true;
+            }
+        }
+        else
+        {
+            if (Pref.IsEnoughCoins(attackUntilUpgradeCost) && attackUntilLevel < maxSkillLevel)
+            {
+                Pref.coins -= attackUntilUpgradeCost;
+                attackUntilLevel++;
+                damageAttackUntil += damageAttackUntilUp;
+                attackUntilCooldown -= attackUntillCooldownUp;
+                attackUntilUpgradeCost += attackUntilUpgradeCostUp * attackUntilLevel;
+                Save();
+                NotifyStatsChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Kiểm tra xem nhân vật có đạt max level hay không
     public override bool IsMaxLevel()
     {
         return level >= maxLevel;
     }
 
+    // Tải dữ liệu từ Pref
     public override void Load()
     {
         if (!string.IsNullOrEmpty(Pref.playerData))
@@ -156,6 +169,7 @@ public class PlayerStats : ActionStats
         }
     }
 
+    // Lưu dữ liệu nhân vật vào Pref
     public override void Save()
     {
         Pref.playerData = JsonUtility.ToJson(this);

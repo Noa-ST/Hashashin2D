@@ -12,7 +12,7 @@ public class Collectable : MonoBehaviour
         _player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         if (_player != null)
         {
-            _bonus = Random.Range(_minBonus, _maxBonus) * _player.PlayerStats.level;
+            _bonus = Random.Range(_minBonus, _maxBonus);
         }
     }
 }

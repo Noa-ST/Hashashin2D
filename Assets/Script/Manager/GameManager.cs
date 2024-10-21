@@ -66,11 +66,6 @@ public class GameManager : Singleton<GameManager>
 
     private void UpdateGUI()
     {
-        if (GUIManager.Ins == null)
-        {
-            Debug.LogError("GUIManager chưa được khởi tạo.");
-            return;
-        }
         GUIManager.Ins.ShowGameGui(true);
         GUIManager.Ins.UpdateCoinsCounting(Pref.coins);
 
@@ -78,11 +73,7 @@ public class GameManager : Singleton<GameManager>
         {
 
             GUIManager.Ins.UpdateHpInfo(player.CurHp, player.PlayerStats.hp);
-            GUIManager.Ins.UpdateLevelInfo(player.PlayerStats.level, player.PlayerStats.xp, player.PlayerStats.levelUpXpRequied);
-        }
-        else
-        {
-            Debug.LogError("PlayerStats không được tìm thấy trên Player.");
+            GUIManager.Ins.UpdateLevelInfo(player.PlayerStats.level, player.PlayerStats.xp, player.PlayerStats.levelUpXpRequired);
         }
     }
 

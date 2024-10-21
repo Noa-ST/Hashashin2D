@@ -10,7 +10,8 @@ public class MoneyCollectable : Collectable
         if (collision.CompareTag("Player"))
         {
             Pref.coins += _bonus;
-            //GUIManager.Ins.UpdateCoinsCounting(Pref.coins);
+            Debug.Log("Coins" + Pref.coins);
+            GUIManager.Ins.UpdateCoinsCounting(Pref.coins);
             Destroy(gameObject);
         }   
     }

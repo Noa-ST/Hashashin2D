@@ -15,4 +15,4 @@ MonoBehaviour:
   hp: 50
   minXpBonus: 5
   maxXpBonus: 10
-  damage: 10
+  damage: 50

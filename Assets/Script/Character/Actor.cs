@@ -53,7 +53,6 @@ public class Actor : MonoBehaviour
             _isDead = true;
             _rb.velocity = Vector3.zero;
             OnDead?.Invoke();
-            Destroy(gameObject, 0.5f);
         }
         OnTakeDamage?.Invoke();
     }

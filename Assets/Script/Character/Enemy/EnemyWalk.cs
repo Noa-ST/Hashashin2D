@@ -144,6 +144,7 @@ public class EnemyWalk : Actor
         if (CurHp <= 0)
         {
             _amin.SetTrigger(AminConts.DEALTH_ENEMY);
+            Destroy(gameObject, 0.5f);
         }
     }
 
@@ -160,6 +161,7 @@ public class EnemyWalk : Actor
     {
         float randomXpBonus = Random.Range(_enemyStat.minXpBonus, _enemyStat.maxXpBonus);
         _player.AddXp(randomXpBonus);
+        GUIManager.Ins.UpdateLevelInfo(_player.PlayerStats.level, _player.PlayerStats.xp, _player.PlayerStats.levelUpXpRequired);
     }
 
     private void OnSpawnColectable()

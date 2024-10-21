@@ -27,7 +27,6 @@ public class PlayerVisual : ActorVisual
     public void OnAddXp()
     {
         if (_playeStats == null) return;
-
-        GUIManager.Ins.UpdateLevelInfo(_playeStats.level, _playeStats.xp, _playeStats.levelUpXpRequied);
+        GUIManager.Ins.UpdateLevelInfo(_playeStats.level, _playeStats.xp, _playeStats.levelUpXpRequired);
     }
 }

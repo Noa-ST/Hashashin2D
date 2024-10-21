@@ -1,13 +1,21 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameoverDialog : Dialog
 {
+    public PlayerController playerController;
     public void Replay()
     {
         Show(false);
+
+        if (playerController != null)
+        {
+            playerController.Setactive(true);
+            playerController.CurHp = playerController.PlayerStats.hp;
+        }
+         
         ReloadCurrentScene();
     }
 

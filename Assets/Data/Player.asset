@@ -13,34 +13,34 @@ MonoBehaviour:
   m_Name: Player
   m_EditorClassIdentifier: 
   hp: 100
-  level: 0
+  level: 1
   maxLevel: 100
-  xp: 183.42708
-  levelUpXpRequied: 50
+  xp: 0
+  levelUpXpRequired: 50
   levelUpXpUpRequireUp: 50
   hpUp: 10
   damageBasicAttack: 20
-  damageBasicAttackUpPerLevel: 2
+  damageBasicAttackUpPerLevel: 1
   damageAttackSkill2: 30
   damageAttackSkill2Up: 5
   attackSkill2Cooldown: 5
-  attackSkill2CooldownUp: 0.25
+  attackSkill2CooldownUp: 0.5
   attackSkill2UpgradeCost: 50
   attackSkill2UpgradeCostUp: 20
-  attackSkill2Level: 0
+  attackSkill2Level: 1
   damageAttackSkill3: 40
   damageAttackSkill3Up: 10
   attackSkill3Cooldown: 10
-  attackSkill3CooldownUp: 0.25
+  attackSkill3CooldownUp: 0.5
   attackSkill3UpgradeCost: 70
   attackSkill3UpgradeCostUp: 30
-  attackSkill3Level: 0
+  attackSkill3Level: 1
   damageAttackUntil: 60
   damageAttackUntilUp: 15
   attackUntilCooldown: 15
-  attackUntillCooldownUp: 0.15
+  attackUntillCooldownUp: 0.5
   attackUntilUpgradeCost: 100
   attackUntilUpgradeCostUp: 40
-  attackUntilLevel: 0
+  attackUntilLevel: 1
   attackUntilRequireBuyCons: 500
   maxSkillLevel: 15

@@ -19,6 +19,11 @@ public class PlayerController : Actor
     public UnityEvent OnAddXp;
     public UnityEvent OnLevelUp;
 
+    // Cooldown hiện tại cho mỗi skill
+    private float currentCooldownSkill2 = 0f;
+    private float currentCooldownSkill3 = 0f;
+    private float currentCooldownSkillUntil = 0f;
+
     public bool IsMoving { get; private set; }
 
     public bool isFacingRight = true;
@@ -89,6 +94,28 @@ public class PlayerController : Actor
         _amin.SetFloat(AminConts.PLAYER_ISAIR, _rb.velocity.y);
     }
 
+    private void Update()
+    {
+        // Giảm cooldown skill 2 theo thời gian, nhưng không cho phép giảm dưới 0
+        if (currentCooldownSkill2 > 0)
+            currentCooldownSkill2 -= Time.deltaTime;
+        else
+            currentCooldownSkill2 = 0f;
+
+        // Giảm cooldown skill 3 theo thời gian, nhưng không cho phép giảm dưới 0
+        if (currentCooldownSkill3 > 0)
+            currentCooldownSkill3 -= Time.deltaTime;
+        else
+            currentCooldownSkill3 = 0f;
+
+        // Giảm cooldown skill Until theo thời gian, nhưng không cho phép giảm dưới 0
+        if (currentCooldownSkillUntil > 0)
+            currentCooldownSkillUntil -= Time.deltaTime;
+        else
+            currentCooldownSkillUntil = 0f;
+    }
+
+
     // Phương thức xử lý di chuyển
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -132,17 +159,19 @@ public class PlayerController : Actor
 
     public void OnAttackSkill2(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && currentCooldownSkill2 == 0f)
         {
             _amin.SetTrigger(AminConts.PLAYER_ATTACK2_ANIMATION);
+            currentCooldownSkill2 = _playerStats.attackSkill2Cooldown;
         }
     }
 
     public void OnAttackSkill3(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && currentCooldownSkill3 == 0f)
         {
             _amin.SetTrigger(AminConts.PLAYER_ATTACK3_ANIMATION);
+            currentCooldownSkill3 = _playerStats.attackSkill3Cooldown;
         }
     }
 
@@ -156,15 +185,16 @@ public class PlayerController : Actor
 
     public void OnAttackSkillUntil(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && currentCooldownSkillUntil == 0f)
         {
             _amin.SetTrigger(AminConts.PLAYER_ATTACKUNTIL_ANIMATION);
+            currentCooldownSkillUntil = _playerStats.attackUntilCooldown;
         }
     }
 
     public void AddXp(float xpBonus)
     {
-        if (PlayerStats == null) return;
+        if (_playerStats == null) return;
 
         _playerStats.xp += xpBonus;
         _playerStats.Upgrade(OnUpgradeStats);
@@ -185,6 +215,7 @@ public class PlayerController : Actor
         if (CurHp <= 0)
         {
             _amin.SetTrigger(AminConts.PLAYER_DEATH);
+            gameObject.SetActive(false);
         }
     }
 
@@ -195,5 +226,10 @@ public class PlayerController : Actor
         {
             damageAble.Takedamage(attackDamage);
         }
+    }
+
+    public void Setactive(bool active)
+    {
+        gameObject.SetActive(active);
     }
 }
