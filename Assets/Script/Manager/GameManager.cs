@@ -16,7 +16,7 @@ public class GameManager : Singleton<GameManager>
     public List<GameObject> levels;
     private int currentLevelIndex = 0;
     private List<EnemyWalk> enemiesInArea = new List<EnemyWalk>();
-    private bool bossDefeated = false;
+    private bool _bossDefeated = false;
     public PlayerController player;
 
     public PlayerController Player { get => player; set => player = value; }
@@ -28,8 +28,21 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        state = GameState.STARTING; 
-        // GUIManager.Ins.ShowGameGui(false); // Hiển thị GUI nếu cần
+        state = GameState.STARTING;
+        GUIManager.Ins.ShowGameGui(false);
+    }
+
+    public void StartGame(GameObject player)
+    {
+        // Đảm bảo level đầu tiên và trạng thái game được thiết lập
+        currentLevelIndex = 0; // Bắt đầu từ level đầu tiên
+        levels[currentLevelIndex].SetActive(true); // Bật level đầu tiên
+        MovePlayerToStartPoint(player); // Đưa player đến vị trí bắt đầu của level đầu tiên
+        ResetLevelState(); // Reset trạng thái cho level đầu tiên
+
+        state = GameState.PLAYING; // Đặt trạng thái thành PLAYING
+
+        UpdateGUI(); // Cập nhật GUI
     }
 
     public void TransitionToNextLevel(GameObject player)
@@ -43,14 +56,36 @@ public class GameManager : Singleton<GameManager>
             ResetLevelState(); // Reset trạng thái cho level mới
 
             state = GameState.PLAYING; // Đặt trạng thái thành PLAYING
+            UpdateGUI(); // Cập nhật GUI khi bắt đầu level mới
         }
         else
         {
-            // Nếu người chơi đã vượt qua tất cả các level
-            state = GameState.GAMEOVER; // Có thể chuyển đến một trạng thái thắng hoặc hoàn tất
-            // Bạn có thể thêm mã để hiển thị màn hình thắng ở đây nếu cần
+            state = GameState.GAMEOVER;
         }
     }
+
+    private void UpdateGUI()
+    {
+        if (GUIManager.Ins == null)
+        {
+            Debug.LogError("GUIManager chưa được khởi tạo.");
+            return;
+        }
+        GUIManager.Ins.ShowGameGui(true);
+        GUIManager.Ins.UpdateCoinsCounting(Pref.coins);
+
+        if (player != null)
+        {
+
+            GUIManager.Ins.UpdateHpInfo(player.CurHp, player.PlayerStats.hp);
+            GUIManager.Ins.UpdateLevelInfo(player.PlayerStats.level, player.PlayerStats.xp, player.PlayerStats.levelUpXpRequied);
+        }
+        else
+        {
+            Debug.LogError("PlayerStats không được tìm thấy trên Player.");
+        }
+    }
+
 
     public void MovePlayerToStartPoint(GameObject player)
     {
@@ -88,7 +123,7 @@ public class GameManager : Singleton<GameManager>
     private void ResetLevelState()
     {
         enemiesInArea.Clear(); // Xóa danh sách kẻ thù trong khu vực
-        bossDefeated = false; // Reset trạng thái boss
+        _bossDefeated = false; // Reset trạng thái boss
     }
 
     // Phương thức để đăng ký kẻ thù
@@ -113,14 +148,14 @@ public class GameManager : Singleton<GameManager>
     // Phương thức gọi khi boss bị tiêu diệt
     public void BossDefeated()
     {
-        bossDefeated = true; // Đánh dấu boss đã bị tiêu diệt
+        _bossDefeated = true; // Đánh dấu boss đã bị tiêu diệt
         CheckEnemies(); // Kiểm tra xem có cần chuyển điểm xuất phát không
     }
 
     // Phương thức kiểm tra xem tất cả kẻ thù và boss đã bị tiêu diệt chưa
     private void CheckEnemies()
     {
-        if (enemiesInArea.Count == 0 && bossDefeated)
+        if (enemiesInArea.Count == 0 && _bossDefeated)
         {
             MoveToNextStartPoint();
         }

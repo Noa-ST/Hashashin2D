@@ -6,20 +6,28 @@ public class PlayerVisual : ActorVisual
 {
     private PlayerController _player;
     private PlayerStats _playeStats;
-    private Animator _amin;
 
     private void Start()
     {
         _player = (PlayerController)_actor;
         _playeStats = _player.PlayerStats;
-        _amin = GetComponent<Animator>();
+    }
+
+    public override void OnTakeDamage()
+    {
+        base.OnTakeDamage();
+        GUIManager.Ins.UpdateHpInfo(_actor.CurHp, _actor.statData.hp);
     }
 
     public void OnDead()
     {
+        GUIManager.Ins.ShowGameoverDialog();
+    }
 
+    public void OnAddXp()
+    {
+        if (_playeStats == null) return;
 
-        //AudioController.Ins.PlaySound(AudioController.Ins.playerDeath);
-        //GUIManager.Ins.ShowGameoverDialog();
+        GUIManager.Ins.UpdateLevelInfo(_playeStats.level, _playeStats.xp, _playeStats.levelUpXpRequied);
     }
 }

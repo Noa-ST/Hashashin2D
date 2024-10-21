@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,13 +16,40 @@ public class GUIManager : Singleton<GUIManager>
     [SerializeField] private Text _coinCountingTxt;
     [SerializeField] private Dialog _skillUpgradeDialog;
     [SerializeField] private Dialog _gameoverDialog;
+    public GameObject damageTextPb;
+    public Canvas gameCanvas;
+    private Camera _mainCamera;
     private Dialog m_activeDialog;
     public Dialog ActiveDialog { get => m_activeDialog; private set => m_activeDialog = value; }
 
     protected override void Awake()
     {
         MakeSingleton(false);
+        gameCanvas = FindObjectOfType<Canvas>();
+        _mainCamera = Camera.main;
     }
+
+
+    private void OnEnable()
+    {
+        CharacterEvents.characterDamaged += CharacterTookDamage;
+    }
+
+    private void OnDisable()
+    {
+        CharacterEvents.characterDamaged -= CharacterTookDamage;
+    }
+
+    public void CharacterTookDamage(GameObject character, float damageReceived)
+    {
+        // Lấy vị trí của nhân vật trong không gian world và chuyển đổi sang vị trí trong không gian màn hình
+        Vector3 spawnPosition = _mainCamera.WorldToScreenPoint(character.transform.position);
+
+        // Tạo và gán giá trị cho TextMeshPro
+        TMP_Text tmpText = Instantiate(damageTextPb, spawnPosition, Quaternion.identity, gameCanvas.transform).GetComponent<TMP_Text>();
+        tmpText.text = damageReceived.ToString();
+    }
+
 
     public void ShowGameGui(bool isShow)
     {
